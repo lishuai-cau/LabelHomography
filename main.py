@@ -56,14 +56,21 @@ def on_mouse(event,x,y,flags,param):
                 os.makedirs(new_path)
             np.save(new_path + '/' + ('%s' % (count/8)).zfill(6), datum)
 
-def read_path(file_pathname):
+def read_path(file_pathname,mode = 'gray'):
     color_filepath = file_pathname + '/color'
     ir_filepath = file_pathname + '/ir'
     #遍历该目录下的所有图片文件
     for filename in os.listdir(color_filepath):
         global ori_img, ir_img, color_img
-        color_img = cv2.imread(color_filepath+'/'+filename,0)
-        ir_img = cv2.imread(ir_filepath+'/'+filename,0)
+        if mode == 'gray':
+            color_img = cv2.imread(color_filepath+'/'+filename,0)
+            ir_img = cv2.imread(ir_filepath+'/'+filename,0)
+        elif mode == 'color':
+            color_img = cv2.imread(color_filepath + '/' + filename)
+            ir_img = cv2.imread(ir_filepath + '/' + filename)
+        else:
+            print("please set mode == gray or mode == color")
+            return -1
         cv2.namedWindow(filename)
         cv2.setMouseCallback(filename,on_mouse)
         ori_img = np.hstack((color_img,ir_img))
@@ -78,6 +85,6 @@ def read_path(file_pathname):
 
 # 按间距中的绿色按钮以运行脚本。
 if __name__ == '__main__':
-    read_path("./Image")
+    read_path("./Image",mode='gray')
 
 
